@@ -46,15 +46,20 @@ def bridge(midi, com):
     with serial.Serial(com, 115200, timeout=0.1) as ser:
         print(f"Слушаю {com}. Крути!")
         msg = []
+        last_print = 0.0
         while True:
-            for b in ser.read(64):
+            # читаем сколько уже пришло (минимум 1 байт), а не ждём полный буфер
+            for b in ser.read(ser.in_waiting or 1):
                 if b & 0x80:  # статус-байт начинает новое сообщение
                     msg = [b]
                 elif msg:
                     msg.append(b)
                 if len(msg) == 3:
                     midi.send_message(msg)
-                    print(f"CC{msg[1]} = {msg[2]:3d}   ", end="\r")
+                    now = time.monotonic()
+                    if now - last_print > 0.05:  # консоль не чаще 20 раз в сек
+                        print(f"CC{msg[1]} = {msg[2]:3d}   ", end="\r")
+                        last_print = now
                     msg = []
 
 

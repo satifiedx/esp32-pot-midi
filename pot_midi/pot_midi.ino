@@ -3,7 +3,7 @@
 const int POT_PIN = 3;
 const byte MIDI_CH = 0;   // канал 1
 const byte CC_NUM = 20;   // CC#20, свободный
-const int HYST = 20;      // гистерезис в отсчётах АЦП, чтобы CC не дрожал
+const int HYST = 10;      // гистерезис в отсчётах АЦП, чтобы CC не дрожал (шум ~±3)
 
 int lastRaw = -1000;
 int lastCc = -1;
@@ -29,5 +29,5 @@ void loop() {
     }
     lastRaw = raw;
   }
-  delay(10);
+  delay(2);
 }
