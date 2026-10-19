@@ -81,6 +81,13 @@ def main():
         except serial.SerialException as e:
             print(f"\n{com} отвалился ({e}), переподключаюсь...")
             time.sleep(1)
+        except rtmidi.RtMidiError as e:
+            # loopMIDI закрыли или порт пропал (сон, перезапуск) - ждём и открываем заново
+            print(f"\nMIDI-порт отвалился ({e}), переподключаюсь...")
+            midi.close_port()
+            del midi
+            time.sleep(1)
+            midi = open_midi()
 
 
 if __name__ == "__main__":
